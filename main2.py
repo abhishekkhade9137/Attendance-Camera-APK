@@ -29,7 +29,10 @@ class CamInterface(BoxLayout):
         self.play_button = Button(text='Play')
         self.play_button.bind(on_press=self.play)
         self.add_widget(self.play_button)
-
+        self.submit_button = Button(text='Submit')
+        self.submit_button.bind(on_press=self.submit)
+        self.add_widget(self.submit_button)
+    
     def capture(self, instance):
         self.counter=self.counter+1
         self.camera.export_to_png("C:\\Users\\abhis\\Music\\Projects\\Attendance-Webcam\\resources\\takenimages\\IMG_{}.png".format(self.counter))
@@ -41,7 +44,12 @@ class CamInterface(BoxLayout):
             self.choice=0
     def play(self, instance):
         self.camera.play = not self.camera.play
-        
+    def submit(self,instance):
+            self.remove_widget(self.submit_button)
+            self.remove_widget(self.play_button)
+            self.remove_widget(self.flip_button)
+            self.remove_widget(self.capture_button)
+            self.remove_widget(self.camera)
 
 class ProcessPhotos(BoxLayout):
     def __init__(self, **kwargs):
@@ -77,7 +85,6 @@ class ProcessPhotos(BoxLayout):
 
     def match_faces(self, taken_photos_dir, cadet_dir):
         try:
-            
             known_faces = {}
             for filename in os.listdir(cadet_dir):
                 if filename.endswith(".jpg") or filename.endswith(".png"):
@@ -86,15 +93,12 @@ class ProcessPhotos(BoxLayout):
                     face_encoding = face_recognition.face_encodings(img)[0]
                     known_faces[filename] = face_encoding
 
-            # Loop through the taken photos
             with open("attendance.txt", "a") as f:
                 for filename in os.listdir(taken_photos_dir):
                     if filename.endswith(".jpg") or filename.endswith(".png"):
                         img_path = os.path.join(taken_photos_dir, filename)
                         img = face_recognition.load_image_file(img_path)
                         unknown_face_encoding = face_recognition.face_encodings(img)[0]
-
-                        # Compare the unknown face to the known faces
                         for known_filename, known_face_encoding in known_faces.items():
                             match_results = face_recognition.compare_faces([known_face_encoding], unknown_face_encoding)
                             if match_results[0]:
@@ -109,7 +113,8 @@ class MyApp(App):
     def build(self):
         self.capture = CamInterface()
         self.process = ProcessPhotos()
-        self.capture.capture_button.bind(on_press=self.run_process)
+        #self.capture.capture_button.bind(on_press=self.run_process)
+        self.capture.submit_button.bind(on_press=self.run_process)
         return self.capture
 
     def run_process(self, instance):
