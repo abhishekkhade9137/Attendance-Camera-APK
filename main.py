@@ -91,13 +91,18 @@ class CamInterface(Screen):
     #def add(self,instance):
 
 
-    def submit(self, instance):
+    def submit(self,instance):
         self.clear_widgets()
         self.process = ProcessPhotos()  # Create an instance of ProcessPhotos
         self.img_dir ="C:\\Users\\abhis\\Music\\Projects\\Attendance-Webcam\\resources\\takenimages"
         self.knowncadets="C:\\Users\\abhis\\Music\\Projects\\Attendance-Webcam\\resources\\cadets"
-        #self.process.scanfaces()
+        self.process.scanfaces()
         self.process.match_faces(self.img_dir,self.knowncadets)
+        self.process.empty_takenimages()
+    
+
+
+
           # Remove all widgets, including the BoxLayout
         # or
           # Remove the specific BoxLayout instance
@@ -154,6 +159,16 @@ class ProcessPhotos(BoxLayout):
         except Exception as e:
             print(f"An error occurred: {e}")
     
+
+    def empty_takenimages(self):
+        folder_path = 'C:\\Users\\abhis\\Music\\Projects\\Attendance-Webcam\\resources\\takenimages'
+        for filename in os.listdir(folder_path):
+            file_path = os.path.join(folder_path, filename)
+            try:
+                os.remove(file_path)
+            except OSError as e:
+                print(f"Error deleting file {file_path}: {e}")
+        print("All files in taken_images folder have been deleted")
 class MyApp(App):
     def build(self):
         self.sm = ScreenManager()
