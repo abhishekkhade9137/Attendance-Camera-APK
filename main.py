@@ -99,6 +99,7 @@ class CamInterface(Screen):
         self.process.scanfaces()
         self.process.match_faces(self.img_dir,self.knowncadets)
         self.process.empty_takenimages()
+        self.manager.current='attendance'
     
 
 
@@ -169,13 +170,40 @@ class ProcessPhotos(BoxLayout):
             except OSError as e:
                 print(f"Error deleting file {file_path}: {e}")
         print("All files in taken_images folder have been deleted")
+
+
+
+class AttendanceScreen(Screen):
+    def __init__(self, **kwargs):
+        super(AttendanceScreen, self).__init__(**kwargs)
+        self.layout = BoxLayout(orientation='vertical')
+        self.layout.size_hint_y = None
+        self.layout.height = 100
+        self.attendance_label = Label(text='', size_hint_y=None, height=100, valign='middle', halign='center')
+        self.layout.add_widget(self.attendance_label)
+        self.add_widget(self.layout)
+        self.show_attendance()
+
+    def show_attendance(self):
+        with open("attendance.txt", "r") as f:
+            attendance_text = f.read()
+        self.attendance_label.text = attendance_text
+
+
+
+
+
+
 class MyApp(App):
     def build(self):
         self.sm = ScreenManager()
         home_screen = Home(name='home')
-        cam_interface_screen = CamInterface(name='cam_interface')  # Create a CamInterface screen
+        cam_interface_screen = CamInterface(name='cam_interface') 
+        attendance_screen = AttendanceScreen(name='attendance')
+         # Create a CamInterface screen
         self.sm.add_widget(home_screen)
-        self.sm.add_widget(cam_interface_screen)  # Add the CamInterface screen to the ScreenManager
+        self.sm.add_widget(cam_interface_screen)
+        self.sm.add_widget(attendance_screen)  # Add the CamInterface screen to the ScreenManager
         self.sm.current = 'home'  # Start with the home screen
         #self.cam_interface_screen.submit_button.bind(on_press=self.run_process)
         return self.sm
