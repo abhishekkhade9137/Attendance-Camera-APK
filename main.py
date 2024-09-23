@@ -8,9 +8,7 @@ from kivy.core.window import Window
 from kivy.uix.screenmanager import ScreenManager,Screen
 import datetime
 import cv2
-
 import os
-
 import face_recognition
 class Home(Screen):
     def __init__(self, **kwargs):
@@ -96,7 +94,7 @@ class CamInterface(Screen):
         self.process = ProcessPhotos()  # Create an instance of ProcessPhotos
         self.img_dir ="C:\\Users\\abhis\\Music\\Projects\\Attendance-Webcam\\resources\\takenimages"
         self.knowncadets="C:\\Users\\abhis\\Music\\Projects\\Attendance-Webcam\\resources\\cadets"
-        self.process.scanfaces()
+        #self.process.scanfaces()
         self.process.match_faces(self.img_dir,self.knowncadets)
         self.process.empty_takenimages()
         self.manager.current='attendance'
